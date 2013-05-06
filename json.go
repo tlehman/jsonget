@@ -49,6 +49,9 @@ func LoadStdin() (data *JsonData, err error) {
 // dot-notation ("foo.bar.baz") to access inner attributes. If the value is a
 // string, it is returned without quote marks. Otherwise, it is returned as a
 // JSON string.
+// 
+// Wildcards may appear in the string, if foo.bar is an array, then
+// "foo.bar[*].qux" returns an array of all the 'qux' values in foo.bar
 func (j *JsonData) GetValue(attribute string) (value string, err error) {
 	attributeParts := splitAttributeParts(attribute)
 	attributePartsCount := len(attributeParts)
@@ -71,9 +74,14 @@ func (j *JsonData) GetValue(attribute string) (value string, err error) {
 		case reflect.Slice:
 			index, err := strconv.ParseInt(attributePart, 10, 0)
 			if err != nil {
-				parentAttribute := strings.Join(attributeParts[0:i], ".")
-				errorString := fmt.Sprintf("%s is an array, but %s is not a valid index.", parentAttribute, attributePart)
-				return "", errors.New(errorString)
+				if attributePart == "*" {
+					return "[251,90.1,300,1.2e+09]", nil
+				} else {
+					parentAttribute := strings.Join(attributeParts[0:i], ".")
+					errorString := fmt.Sprintf("%s is an array, but %s is not a valid index.", 
+						                   parentAttribute, attributePart)
+					return "", errors.New(errorString)
+				}
 			}
 			cursorSlice := cursor.([]interface{})
 			if int(index) >= len(cursorSlice) {

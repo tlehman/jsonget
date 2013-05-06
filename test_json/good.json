@@ -12,6 +12,12 @@
       "introspective": true,
       "peanuts": ["yum"]
     }
+  ],
+  "inventory": [
+      {"name": "mountain bike", "price": 251.0},
+      {"name": "red wagon", "price": 90.10},
+      {"name": "kinesis advantage", "price": 300.0},
+      {"name": "a ticket to Mars", "price": 1200000000.0}
   ]
 }
 
