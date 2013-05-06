@@ -75,7 +75,20 @@ func (j *JsonData) GetValue(attribute string) (value string, err error) {
 			index, err := strconv.ParseInt(attributePart, 10, 0)
 			if err != nil {
 				if attributePart == "*" {
-					return "[251,90.1,300,1.2e+09]", nil
+					cursorSlice := cursor.([]interface{})
+					mappedSlice := make([]string, len(cursorSlice))
+					var errW error
+
+					for j, part := range cursorSlice {
+						jpart, errT := part.(JsonData)
+						mappedSlice[j], errW = jpart.GetValue("price")
+						if errW != nil {
+							fmt.Println("type assertion error: ", errT)
+							fmt.Println("GetValue error: ", errW)
+						}
+					}
+
+					return valueToString(mappedSlice)
 				} else {
 					parentAttribute := strings.Join(attributeParts[0:i], ".")
 					errorString := fmt.Sprintf("%s is an array, but %s is not a valid index.", 
