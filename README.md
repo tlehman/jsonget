@@ -79,8 +79,10 @@ And JSON objects and arrays are returned as JSON:
 
 To Do
 =====
- - [ ] Add wildcard support for arrays, example:
+ - Add wildcard support for arrays, example:
+
 ```
 > echo "[{product:'coffee', price:2.10}, {product:'beer', price:3.80}]" | jsonget '*.price'
+
 [2.10, 3.80]
 ```
