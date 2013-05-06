@@ -79,11 +79,10 @@ func (j *JsonData) GetValue(attribute string) (value string, err error) {
 					mappedSlice := make([]string, len(cursorSlice))
 					var errW error
 
-					for j, part := range cursorSlice {
-						jpart, errT := part.(JsonData)
-						mappedSlice[j], errW = jpart.GetValue("price")
+					for k, part := range cursorSlice {
+						jpart := JsonData{part}
+						mappedSlice[k], errW = jpart.GetValue("price")
 						if errW != nil {
-							fmt.Println("type assertion error: ", errT)
 							fmt.Println("GetValue error: ", errW)
 						}
 					}
