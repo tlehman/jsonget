@@ -81,7 +81,7 @@ func (j *JsonData) GetValue(attribute string) (value string, err error) {
 
 					for k, part := range cursorSlice {
 						jpart := JsonData{part}
-						mappedSlice[k], errW = jpart.GetValue("price")
+						mappedSlice[k], errW = jpart.GetValue(attributeParts[i+1])
 						if errW != nil {
 							fmt.Println("GetValue error: ", errW)
 						}
