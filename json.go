@@ -76,18 +76,7 @@ func (j *JsonData) GetValue(attribute string) (value string, err error) {
 			if err != nil {
 				if attributePart == "*" {
 					cursorSlice := cursor.([]interface{})
-					mappedSlice := make([]string, len(cursorSlice))
-					var errW error
-
-					for k, part := range cursorSlice {
-						jpart := JsonData{part}
-						mappedSlice[k], errW = jpart.GetValue(attributeParts[i+1])
-						if errW != nil {
-							fmt.Println("GetValue error: ", errW)
-						}
-					}
-
-					return valueToString(mappedSlice)
+					return heterogenousArrayToString(cursorSlice, attributeParts[i+1])
 				} else {
 					parentAttribute := strings.Join(attributeParts[0:i], ".")
 					errorString := fmt.Sprintf("%s is an array, but %s is not a valid index.", 
@@ -159,6 +148,32 @@ func valueToString(value interface{}) (text string, err error) {
 	text = string(textBytes)
 	text = quotedString.ReplaceAllString(text, "$1")
 	return text, nil
+}
+
+// Return a string representing a JSON heterogeneous array
+// 
+// Examples:
+//   [2, "a", 1.1]     -->  `[2, "a", 1.1]`
+//   [2, 1.0, 3.1, 4]  -->  `[2, 1.0, 3.1, 4]`
+func heterogenousArrayToString(value []interface{}, attributePart string) (text string, err error) {
+	var elem string
+
+	for i, part := range value {
+		jpart := JsonData{part}
+
+		elem, err = jpart.GetValue(attributePart)
+
+		if err != nil {
+			fmt.Println("GetValue error: ", err)
+			return "", err
+		}
+
+		text += elem
+		if i < len(value)-1 {
+			text += ", "
+		}
+	}
+	return "[" + text + "]", nil
 }
 
 // Returns all the attribute parts, including turning array access into "plain"
