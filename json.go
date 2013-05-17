@@ -76,7 +76,11 @@ func (j *JsonData) GetValue(attribute string) (value string, err error) {
 			if err != nil {
 				if attributePart == "*" {
 					cursorSlice := cursor.([]interface{})
-					return heterogenousArrayToString(cursorSlice, attributeParts[i+1])
+					if i < len(attributeParts)-1 {
+						return heterogenousArrayToString(cursorSlice, attributeParts[i+1])
+					} else { // 'foo[*]' should resolve to 'foo'
+						return valueToString(cursor)
+					}
 				} else {
 					parentAttribute := strings.Join(attributeParts[0:i], ".")
 					errorString := fmt.Sprintf("%s is an array, but %s is not a valid index.", 
@@ -168,9 +172,16 @@ func heterogenousArrayToString(value []interface{}, attributePart string) (text 
 			return "", err
 		}
 
-		text += elem
+		// type assertion on part
+		strelem, ok := part.(string)
+		if ok {
+			text += `"` + strelem + `"`
+		} else {
+			text += elem
+		}
+
 		if i < len(value)-1 {
-			text += ", "
+			text += ","
 		}
 	}
 	return "[" + text + "]", nil

@@ -81,14 +81,15 @@ func TestValueToString(t *testing.T) {
 
 func TestGetValue(t *testing.T) {
 	testValues := map[string]string{
-		// Expected                   Given
-		"true": "foo",
-		"{\"baz\":5,\"biz\":5.5}":   "bar",
-		"5":                         "bar.baz",
-		"":                          "nope.nope.nope",
-		"spoon":                     "whoa[3]",
-		"yum":                       "deep[1].peanuts[0]",
-		"[251, 90.1, 300, 1.2e+09]": "inventory[*].price",
+		// Expected                    Given
+		"true":                        "foo",
+		"{\"baz\":5,\"biz\":5.5}":     "bar",
+		"5":                           "bar.baz",
+		"":                            "nope.nope.nope",
+		"spoon":                       "whoa[3]",
+		"yum":                         "deep[1].peanuts[0]",
+		"[251,90.1,300,1.2e+09]":      "inventory[*].price",
+		`["there","is","no","spoon"]`: "whoa[*]",
 	}
 
 	data, _ := LoadFile(GOOD_JSON_PATH)
